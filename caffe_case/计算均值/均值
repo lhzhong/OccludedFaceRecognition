@@ -1,0 +1,4 @@
+/home/zhong/caffe/build/tools/compute_image_mean /home/zhong/caffe/examples/mnist/mnist_train_lmdb /home/zhong/caffe_case/计算均值/mean.binaryproto
+
+第一个参数：数据位置
+第二个参数：生成文件保存位置

@@ -1,0 +1,16 @@
+#在不改变数据的情况下，改变输入的维度
+
+layer {
+  name: "reshape"
+  type: "Reshape"
+  bottom: "input"
+  top: "output"
+  reshape_param {
+    shape{
+			dim: 0 #
+			dim: 2
+			dim: 3
+			dim: -1	
+		}
+  }
+}

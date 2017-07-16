@@ -1,0 +1,62 @@
+#往往loss function 是非凸的，没有解析解，我们通过优化方法来求解
+#caffe提供了六种算法来求解最优参数，在solver配置文件中，通过设置type类型来选择
+
+	Stochastic Gradient Descent (type: "SGD")
+	AdaDelta (type: "AdaDelta")
+	Adaptive Gradient (type: "AdaGrad")
+	Adam (type: "Adam")
+	Nesterov's Accelerated Gradient (type: "Nesterov")
+	RMSprop (type: "RMSprop")
+
+net: "examples/mnist/lenet_train_test.prototxt"
+test_iter: 100
+test_interval: 500
+base_lr: 0.01
+momentum: 0.9
+type: SGD
+weight_decay: 0.0005
+lr_policy: "inv"
+gamma: 0.0001
+power: 0.75
+display: 100
+max_iter: 10000
+snapshot: 5000
+snapshot_prefix: "examples/mnist/lenet"
+solver_mode: CPU
+
+
+######################详解###########################
+net: "examples/mnist/lenet_train_test.prototxt" #网络配置文件的位置
+train_net: "examples/hdf5_classification/logreg_auto_train.prototxt" #也可以分别设定train和test
+test_net: "examples/hdf5_classification/logreg_auto_test.prototxt"
+
+test_iter: 100 #迭代的测试样本的数 batch*test_iter 假设有5000个测试样本，一次测试想跑遍这5000个则需要设置test_iter*batch=5000
+
+test_interval: 500 #测试间隔。也就是每训练500次，进行一次测试，比如输出准确率。设置小，可能会使网络变慢
+
+base_lr: 0.01 #base_lr用于设置基础学习率，学习率不能设置太高
+
+momentum: 0.9 #动量
+
+type: SGD #参数求解算法选择
+
+weight_decay: 0.0005 #权重衰减率
+
+lr_policy: "inv" #学习率调整的策略
+	- fixed:     保持base_lr不变
+	- step:      如果设置为step，还需要设置一个stepsize，返回base_lr*gamma^(floor(iter/stepsize)),iter为当前迭代次数
+	- exp:       返回base_lr*gamma^iter,iter为当前迭代次数
+	- inv:       如果设置成inv，还需设置一个power，返回base_lr*(1+gamma*iter)^(-power)  
+	- multistep: 如果设置成multistep，还需要设置一个stepvalue。这个参数和step很相似，step是均匀等间隔变化，multistep根据stepvaule变化
+	- poly:      学习率进行多项式误差，返回base_lr*(1-iter/max_iter)^power
+	- sigmoid:   学习率进行sigma衰减，返回base_lr*(1/(1+exp(-gamma*(iter-stepsize)))) 
+gamma: 0.0001
+power: 0.75
+
+display: 100 #每训练100次，在屏幕上显示一次。如果设置为0，则不显示
+max_iter: 10000 #最大迭代次数
+snapshot: 5000 #快照。将训练出来的model和solver状态进行保存，设置训练多少次后进行保存
+snapshot_prefix: "examples/mnist/lenet" #保存的位置
+
+solver_mode: CPU #设置运行模式
+
